@@ -51,23 +51,28 @@ class Program
 
                  //Bucle que se ejecuta mientras no se haya llegado al final del archivo. Por cada línea:
                  //Lee la línea.
-                 //La divide en partes usando , como separador.
-                while (!reader.EndOfStream)
+                 //La divide en partes usando ,como separador.
+                while (!reader.EndOfStream) //indica si se ha llegado al final del flujo de datos (stream).
                 {
                     var line = reader.ReadLine();
                     var values = line.Split(',');
 
 
-
+                    //Crea una nueva instancia de Transaccion con los datos de la línea y la agrega a la lista:
                     transacciones.Add(new Transaccion
                     {
-                        Id = int.Parse(values[0]),
-                        Tipo = values[1].Trim(),
+                        Id = int.Parse(values[0]),//convierte a entero
+                        Tipo = values[1].Trim(),//elimina espacios en blanco
                         Monto = decimal.Parse(values[2], CultureInfo.InvariantCulture)
+                        //CultureInfo.InvariantCulture asegura que la conversión se
+                        //realiza utilizando el separador decimal global (punto) y
+                        //no el de la cultura local del sistema.
                     });
                 }
             }
         }
+           //si ocurre un error al procesar el archivo(ejm format invalido)muestra el
+           //error y termina
         catch (Exception ex)
         {
             Console.WriteLine($"Error al leer el archivo: {ex.Message}");
@@ -75,17 +80,21 @@ class Program
         }
 
         // Calcular balance final
+        //suma todos los montos de transacciones tipo"Credito"
+        //le resta la suma de los debito
         decimal balanceFinal = transacciones.Where(t => t.Tipo == "Crédito").Sum(t => t.Monto)
                             - transacciones.Where(t => t.Tipo == "Débito").Sum(t => t.Monto);
 
-        // Transacción de mayor monto
+        // busca la Transacción de mayor monto
         var transaccionMayorMonto = transacciones.OrderByDescending(t => t.Monto).FirstOrDefault();
 
-        // Conteo de transacciones por tipo
+        // cuenta cuantas transacciones son de tipo credito y cuantas de debito
         int creditos = transacciones.Count(t => t.Tipo == "Crédito");
         int debitos = transacciones.Count(t => t.Tipo == "Débito");
 
         // Imprimir reporte
+        //imprime transaccion con mayor monto y num.de creditos y debitos
+        //f2 formatea los decimales a 2 cifras
         Console.WriteLine("Reporte de Transacciones");
         Console.WriteLine("---------------------------------------------");
         Console.WriteLine($"Balance Final: {balanceFinal:F2}");
@@ -93,9 +102,12 @@ class Program
         Console.WriteLine($"Conteo de Transacciones: Crédito: {creditos} Débito: {debitos}");
     }
 }
-
+        //define la clase transaccion con 3 propiedades
+        //id:identificador de la tx
+        //tipo:puede ser credito o debito
+        //monto:valor monetario de la tx
 class Transaccion
-{
+{    //get=obtener,set=asignar
     public int Id { get; set; }
     public string Tipo { get; set; }
     public decimal Monto { get; set; }
